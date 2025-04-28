@@ -3,129 +3,173 @@ import MovieList from '../components/MovieList';
 import Loading from '../components/Loading';
 
 const API_KEY = 'da76538c'; // Your OMDb API Key
-const API_URL = `https://www.omdbapi.com/?apikey=${API_KEY}`;
+const API_URL_BASE = `https://www.omdbapi.com/?apikey=${API_KEY}`;
 
-const initialSearchTerms = [
-  'star', 'love', 'dark', 'space', 'time', 'king', 'war', 'life', 'magic', 'future',
-  'world', 'city', 'dragon', 'power', 'secret', 'lost', 'home', 'dream', 'night', 'sun',
-  'blood', 'galaxy', 'monster', 'ghost', 'robot', 'island', 'alien', 'game', 'hero',
-  'shadow', 'moon', 'fire', 'ice', 'heart', 'legend', 'quest', 'paradise', 'storm', 'silence',
-  'forest', 'ocean', 'mountain', 'journey', 'destiny', 'revenge', 'treasure', 'phantom', 'mirror', 'witch',
-  'sorcerer', 'vampire', 'zombie', 'pirate', 'samurai', 'knight', 'spy', 'detective', 'sheriff', 'outlaw',
-  'angel', 'demon', 'prophecy', 'curse', 'chosen', 'savior', 'invasion', 'apocalypse', 'paradox', 'dimension',
-  'parallel', 'experiment', 'clone', 'mutant', 'superhero', 'villain', 'sidekick', 'mentor', 'apprentice', 'wizard',
-  'artifact', 'relic', 'scroll', 'crystal', 'sword', 'shield', 'arrow', 'gun', 'spaceship', 'time machine',
-  'portal', 'labyrinth', 'castle', 'temple', 'ruins', 'underground', 'cavern', 'volcano', 'desert', 'jungle',
-  'metropolis', 'dystopia', 'utopia', 'colony', 'frontier', 'wild west', 'noir', 'neon', 'cyber', 'steampunk'
+// --- Predefined list of popular movie IMDb IDs ---
+// (Pick a few well-known movies)
+const popularMovieIds = [
+  'tt0133093', // The Matrix
+  'tt1375666', // Inception
+  'tt0468569', // The Dark Knight
+  'tt0111161', // The Shawshank Redemption
+  'tt0109830', // Forrest Gump
+  'tt0110912', // Pulp Fiction
+  'tt0068646', // The Godfather
+  'tt0816692', // Interstellar
 ];
 
-// --- New: Helper function to get a random term ---
-const getRandomSearchTerm = () => {
-  const randomIndex = Math.floor(Math.random() * initialSearchTerms.length);
-  return initialSearchTerms[randomIndex];
-};
-
 function Home() {
-  const [movies, setMovies] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  // State for the predefined popular movies
+  const [popularMovies, setPopularMovies] = useState([]);
+  const [loadingPopular, setLoadingPopular] = useState(true);
+  const [errorPopular, setErrorPopular] = useState(null);
 
-  // --- Modified: Initialize searchTerm state with a random term ONCE ---
-  // The function passed to useState runs only on the initial render.
-  const [searchTerm, setSearchTerm] = useState(() => getRandomSearchTerm());
+  // State for search results
+  const [searchResults, setSearchResults] = useState([]);
+  const [loadingSearch, setLoadingSearch] = useState(false); // Initially false
+  const [errorSearch, setErrorSearch] = useState(null);
 
-  // State to hold the current value of the input field separately
-  // This makes the input "controlled" and easier to manage updates
-  const [inputValue, setInputValue] = useState(searchTerm);
+  // State for the search input field
+  const [inputValue, setInputValue] = useState(''); // Start empty
 
+  // State to track if a search has been performed
+  const [hasSearched, setHasSearched] = useState(false);
 
+  // --- Effect to fetch predefined popular movies ON MOUNT ONLY ---
   useEffect(() => {
-    const fetchMovies = async () => {
-      // Don't fetch if the searchTerm is empty after a user clears the input
-      if (!searchTerm) {
-        setMovies([]);
-        setLoading(false);
-        setError(null); // Clear errors if search term is empty
-        return;
-      }
-
-      setLoading(true);
-      setError(null); // Reset error before new fetch
-      console.log(`Fetching movies for term: ${searchTerm}`); // Log the search term
-
+    const fetchPopularMovies = async () => {
+      setLoadingPopular(true);
+      setErrorPopular(null);
       try {
-        // Using the 's' parameter for searching multiple movies/series
-        const response = await fetch(`${API_URL}&s=${encodeURIComponent(searchTerm)}`); // Encode the search term
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
+        // Create an array of fetch promises for each ID
+        const promises = popularMovieIds.map(id =>
+          fetch(`${API_URL_BASE}&i=${id}`).then(res => {
+            if (!res.ok) {
+              throw new Error(`HTTP error fetching ID ${id}! status: ${res.status}`);
+            }
+            return res.json();
+          })
+        );
 
-        if (data.Response === 'True') {
-          setMovies(data.Search); // OMDb returns results in the 'Search' array
-        } else {
-          // Handle API-specific errors (e.g., "Movie not found!", "Too many results.")
-          setError(data.Error || `Nenhum resultado encontrado para "${searchTerm}".`);
-          setMovies([]); // Clear previous movies if search fails
+        // Wait for all promises to resolve
+        const moviesData = await Promise.all(promises);
+
+        // Filter out any potential errors from individual fetches if OMDb returns Response=False
+        const successfulMovies = moviesData.filter(movie => movie.Response === 'True');
+
+        if (successfulMovies.length === 0 && moviesData.length > 0) {
+          // Handle case where all fetches failed specifically
+          throw new Error("Não foi possível buscar os detalhes dos filmes populares.");
         }
+
+        setPopularMovies(successfulMovies);
+
       } catch (err) {
-        console.error("Fetch error:", err);
-        setError('Erro ao buscar dados. Verifique a conexão ou a API.');
-        setMovies([]); // Clear movies on fetch error
+        console.error("Error fetching popular movies:", err);
+        setErrorPopular('Erro ao carregar filmes populares.');
+        setPopularMovies([]); // Clear in case of error
       } finally {
-        setLoading(false);
+        setLoadingPopular(false);
       }
     };
 
-    fetchMovies(); // Fetch movies when the component mounts or searchTerm changes
+    fetchPopularMovies();
+  }, []); // Empty dependency array ensures this runs only once on mount
 
-  }, [searchTerm]); // Re-run effect ONLY when searchTerm changes
+  // --- Function to perform search ---
+  const performSearch = async (searchTerm) => {
+    if (!searchTerm) {
+      setErrorSearch("Por favor, digite um termo para buscar.");
+      setSearchResults([]);
+      setLoadingSearch(false);
+      return; // Exit if search term is empty
+    }
 
-  // Update input field state when user types
-  const handleInputChange = (event) => {
-    setInputValue(event.target.value);
-  };
+    setLoadingSearch(true);
+    setErrorSearch(null);
+    setSearchResults([]); // Clear previous results
 
-  // Handle form submission
-  const handleSearch = (event) => {
-    event.preventDefault();
-    // Update the actual searchTerm only when the form is submitted
-    // Trim whitespace to avoid searching for just spaces
-    const newSearchTerm = inputValue.trim();
-    if (newSearchTerm) {
-      setSearchTerm(newSearchTerm);
-    } else {
-      // Optional: Handle empty submission (e.g., clear results or show message)
-      setSearchTerm(''); // Trigger useEffect to clear results
-      setError("Por favor, digite um termo para buscar.");
+    try {
+      const response = await fetch(`${API_URL_BASE}&s=${encodeURIComponent(searchTerm)}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
+
+      if (data.Response === 'True') {
+        setSearchResults(data.Search);
+      } else {
+        setErrorSearch(data.Error || `Nenhum resultado encontrado para "${searchTerm}".`);
+        setSearchResults([]);
+      }
+    } catch (err) {
+      console.error("Search error:", err);
+      setErrorSearch('Erro ao buscar dados. Verifique a conexão ou a API.');
+      setSearchResults([]);
+    } finally {
+      setLoadingSearch(false);
     }
   };
 
+  // --- Handlers for the search form ---
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+    // Optionally clear search error message while typing
+    if (errorSearch) setErrorSearch(null);
+  };
+
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
+    const searchTerm = inputValue.trim();
+    setHasSearched(true); // Mark that a search has been attempted/performed
+    performSearch(searchTerm);
+  };
+
+  // --- Render Logic ---
   return (
     <div className="container">
-      {/* Search Form */}
-      <form onSubmit={handleSearch} style={{ marginBottom: '1rem', textAlign: 'center' }}>
+      {/* Search Form - Always visible */}
+      <form onSubmit={handleSearchSubmit} style={{ marginBottom: '2rem', textAlign: 'center' }}>
         <input
           type="text"
           name="search"
           placeholder="Buscar filmes ou séries..."
-          value={inputValue} // Controlled input
-          onChange={handleInputChange} // Update state on change
+          value={inputValue}
+          onChange={handleInputChange}
           style={{ padding: '0.5rem', marginRight: '0.5rem', minWidth: '250px' }}
         />
         <button type="submit" style={{ padding: '0.5rem 1rem' }}>Buscar</button>
       </form>
 
-      {loading && <Loading />}
-      {error && <p className="error">{error}</p>}
-      {!loading && !error && (movies.length > 0
-        ? <MovieList movies={movies} />
-        : <p className="info">Nenhum resultado encontrado.</p> // Generic message if no error but no movies
-      )}
-      {/* Show the search term if no results and no error */}
-      {!loading && !error && movies.length === 0 && searchTerm && (
-        <p className="info">Nenhum resultado encontrado para "{searchTerm}".</p>
-      )}
+      {/* --- Conditional Content Area --- */}
+      <div>
+        {!hasSearched ? (
+          // --- Display Popular Movies (Before Search) ---
+          <>
+            <h2 style={{ textAlign: 'center', marginBottom: '1rem' }}>Filmes Populares</h2>
+            {loadingPopular && <Loading />}
+            {errorPopular && <p className="error">{errorPopular}</p>}
+            {!loadingPopular && !errorPopular && (
+              popularMovies.length > 0
+                ? <MovieList movies={popularMovies} />
+                : <p className="info">Não foi possível carregar filmes populares.</p>
+            )}
+          </>
+        ) : (
+          // --- Display Search Results (After Search) ---
+          <>
+            {/* Optional: Add a heading for search results */}
+            <h2 style={{ textAlign: 'center', marginBottom: '1rem' }}>Resultados da Busca</h2>
+            {loadingSearch && <Loading />}
+            {errorSearch && <p className="error">{errorSearch}</p>}
+            {!loadingSearch && !errorSearch && (
+              searchResults.length > 0
+                ? <MovieList movies={searchResults} />
+                : <p className="info">Nenhum resultado encontrado para "{inputValue.trim() || 'sua busca'}".</p> // Show message even if list is empty
+            )}
+          </>
+        )}
+      </div>
     </div>
   );
 }
