@@ -1,0 +1,241 @@
+/* Basic Reset & Body Styles */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f4f4f4;
+  color: #333;
+  line-height: 1.6;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.container {
+  max-width: 1100px;
+  margin: auto;
+  overflow: hidden;
+  padding: 0 2rem;
+}
+
+/* Header */
+.app-header {
+  background: #333;
+  color: #fff;
+  padding: 1rem 0;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.app-header h1 {
+  margin: 0;
+}
+
+.app-header nav a {
+  color: #fff;
+  text-decoration: none;
+  margin: 0 10px;
+}
+
+.app-header nav a:hover {
+  text-decoration: underline;
+}
+
+
+/* Loading & Error */
+.loading,
+.error {
+  text-align: center;
+  padding: 2rem;
+  font-size: 1.2rem;
+  color: #555;
+}
+
+.error {
+  color: #dc3545;
+  /* Red for errors */
+}
+
+/* Movie List */
+.movie-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Movie Card */
+.movie-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  /* Ensures poster fits within bounds */
+  text-align: center;
+  padding-bottom: 1rem;
+  /* Space for button */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* Pushes button to bottom */
+}
+
+.movie-card img {
+  width: 100%;
+  height: 300px;
+  /* Fixed height for consistency */
+  object-fit: cover;
+  /* Cover maintains aspect ratio */
+  display: block;
+  /* Removes extra space below image */
+}
+
+.movie-card .placeholder-poster {
+  width: 100%;
+  height: 300px;
+  background-color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 0.9rem;
+}
+
+
+.movie-card h3 {
+  font-size: 1.1rem;
+  margin: 0.8rem 0.5rem 0.5rem;
+  /* Top, Sides, Bottom */
+  min-height: 40px;
+  /* Give space for longer titles */
+}
+
+.movie-card p {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0.2rem 0.5rem;
+}
+
+.movie-card .details-button {
+  display: inline-block;
+  background: #007bff;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  border-radius: 5px;
+  margin-top: 0.8rem;
+  transition: background-color 0.2s ease;
+}
+
+.movie-card .details-button:hover {
+  background: #0056b3;
+}
+
+/* Movie Details */
+.movie-details {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 2rem;
+  /* Space between image and text */
+}
+
+.movie-details img {
+  max-width: 300px;
+  height: auto;
+  border-radius: 5px;
+  object-fit: contain;
+}
+
+.movie-details .details-content {
+  flex: 1;
+  /* Takes remaining space */
+}
+
+.movie-details h2 {
+  margin-top: 0;
+}
+
+.movie-details p {
+  margin-bottom: 1rem;
+}
+
+.movie-details strong {
+  color: #333;
+}
+
+.movie-details .back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.movie-details .back-link:hover {
+  text-decoration: underline;
+}
+
+.movie-details button {
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  margin-top: 1rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.movie-details .fav-button-add {
+  background-color: #28a745;
+  /* Green */
+  color: white;
+}
+
+.movie-details .fav-button-add:hover {
+  background-color: #218838;
+}
+
+.movie-details .fav-button-remove {
+  background-color: #dc3545;
+  /* Red */
+  color: white;
+}
+
+.movie-details .fav-button-remove:hover {
+  background-color: #c82333;
+}
+
+/* Favorites Page */
+.favorites-page h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.favorites-page .movie-list {
+  /* Re-use movie-list styles */
+}
+
+.favorites-page .movie-card .remove-button {
+  display: inline-block;
+  background: #dc3545;
+  /* Red */
+  color: #fff;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  border: none;
+  /* Looks like a button */
+  border-radius: 5px;
+  margin-top: 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.favorites-page .movie-card .remove-button:hover {
+  background: #c82333;
+}
