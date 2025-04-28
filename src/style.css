@@ -128,6 +128,7 @@ code {
   text-decoration: none;
   border-radius: 5px;
   margin-top: 0.8rem;
+  margin: 0.5rem;
   transition: background-color 0.2s ease;
 }
 
@@ -215,10 +216,6 @@ code {
 .favorites-page h2 {
   text-align: center;
   margin-bottom: 1.5rem;
-}
-
-.favorites-page .movie-list {
-  /* Re-use movie-list styles */
 }
 
 .favorites-page .movie-card .remove-button {
