@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import Home from './pages/Home';
 import MovieDetails from './pages/MovieDetails';
 import Favorites from './pages/Favorites';
@@ -20,7 +20,11 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/movie/:id" element={<MovieDetails />} />
           <Route path="/favorites" element={<Favorites />} />
-          <Route path="*" element={<div className='container'><p style={{ textAlign: 'center' }}>Página não encontrada!</p></div>} />
+          <Route path="*" element={
+            <div className='container'>
+              <p style={{ textAlign: 'center' }}>Página não encontrada!</p>
+            </div>
+          } />
         </Routes>
       </main>
     </Router>
