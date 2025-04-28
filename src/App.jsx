@@ -1,20 +1,32 @@
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import React from 'react'
-import Home from './pages/home';
-import { Layout } from './components/Layout/Layout';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import Home from './pages/Home';
+import MovieDetails from './pages/MovieDetails';
+import Favorites from './pages/Favorites'; // Import Favorites page
+import './style.css'; // Import global styles
 
-export default function App() {
+function App() {
   return (
-    <div className='App'>
-      <BrowserRouter>
+    <Router>
+      <header className="app-header">
+        <h1>🎬 Mini Catálogo de Filmes</h1>
+        <nav>
+          <Link to="/">Início</Link>
+          <Link to="/favorites">Favoritos</Link>
+        </nav>
+      </header>
+      <main>
         <Routes>
-          <Route path='/' element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path='*' element={<h1>404</h1>} />
-          </Route>
+          <Route path="/" element={<Home />} />
+          {/* Route parameter :id will hold the imdbID */}
+          <Route path="/movie/:id" element={<MovieDetails />} />
+          <Route path="/favorites" element={<Favorites />} />
+          {/* Optional: Add a 404 Not Found route */}
+          <Route path="*" element={<div className='container'><p style={{ textAlign: 'center' }}>Página não encontrada!</p></div>} />
         </Routes>
-      </BrowserRouter>
-    </div>
-
+      </main>
+    </Router>
   );
 }
+
+export default App;
