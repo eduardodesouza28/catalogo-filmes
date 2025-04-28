@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'; // Import Link
 
-// Re-use helper functions or define them here if not using a hook
 const getFavoritesFromStorage = () => {
   const favorites = localStorage.getItem('favoriteMovies');
   return favorites ? JSON.parse(favorites) : [];
@@ -11,13 +10,12 @@ const saveFavoritesToStorage = (favorites) => {
   localStorage.setItem('favoriteMovies', JSON.stringify(favorites));
 };
 
-// Re-use or adapt MovieCard or create a simpler one
 const FavoriteMovieCard = ({ movie, onRemove }) => {
   const posterUrl = movie.Poster === 'N/A' ? 'https://via.placeholder.com/200x300?text=No+Image' : movie.Poster;
 
   return (
-    <div className="movie-card"> {/* Reuse movie-card styling */}
-      <Link to={`/movie/${movie.imdbID}`}> {/* Link to details */}
+    <div className="movie-card">
+      <Link to={`/movie/${movie.imdbID}`}>
         {posterUrl ? (
           <img src={posterUrl} alt={`${movie.Title} Poster`} />
         ) : (
@@ -26,7 +24,6 @@ const FavoriteMovieCard = ({ movie, onRemove }) => {
         <h3>{movie.Title}</h3>
         <p>Ano: {movie.Year}</p>
       </Link>
-      {/* Button to remove directly from this page */}
       <button onClick={() => onRemove(movie.imdbID)} className="remove-button">
         Remover
       </button>
@@ -39,15 +36,14 @@ function Favorites() {
   const [favoriteMovies, setFavoriteMovies] = useState([]);
 
   useEffect(() => {
-    // Load favorites when the component mounts
     setFavoriteMovies(getFavoritesFromStorage());
-  }, []); // Empty dependency array means run once on mount
+  }, []);
 
   const handleRemoveFavorite = (idToRemove) => {
     const currentFavorites = getFavoritesFromStorage();
     const updatedFavorites = currentFavorites.filter(movie => movie.imdbID !== idToRemove);
     saveFavoritesToStorage(updatedFavorites);
-    setFavoriteMovies(updatedFavorites); // Update the state to re-render the list
+    setFavoriteMovies(updatedFavorites);
   };
 
   return (
@@ -56,7 +52,7 @@ function Favorites() {
       {favoriteMovies.length === 0 ? (
         <p className="info" style={{ textAlign: 'center' }}>Você ainda não salvou nenhum filme.</p>
       ) : (
-        <div className="movie-list"> {/* Reuse movie-list grid */}
+        <div className="movie-list">
           {favoriteMovies.map((movie) => (
             <FavoriteMovieCard
               key={movie.imdbID}
