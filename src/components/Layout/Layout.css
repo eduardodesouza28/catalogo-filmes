@@ -1,17 +1,15 @@
-/* src/components/Layout/Layout.css */
 
-/* Styles from index.css related to header can be moved here or kept global */
 .app-header {
   background: #333;
   color: #fff;
   padding: 1rem 0;
   text-align: center;
-  margin-bottom: 1rem; /* Space between header and main content */
+  margin-bottom: 1rem;
 }
 
 .app-header h1 {
   margin: 0;
-  font-size: 1.8rem; /* Adjust as needed */
+  font-size: 1.8rem;
 }
 
 .app-header nav {
@@ -21,29 +19,13 @@
 .app-header nav a {
   color: #fff;
   text-decoration: none;
-  margin: 0 15px; /* More spacing */
+  margin: 0 15px;
   font-size: 1.1rem;
   transition: color 0.2s ease;
 }
 
 .app-header nav a:hover,
-.app-header nav a.active { /* Style for active link if using NavLink */
-  color: #00aaff; /* Highlight color */
+.app-header nav a.active {
+  color: #00aaff;
   text-decoration: underline;
 }
-
-.main-content {
-  /* Ensure main content uses the container width, padding etc. */
-  /* We apply 'container' class within individual pages like Home, MovieDetails */
-  /* You might add padding top/bottom here if needed */
-   padding-bottom: 2rem; /* Ensure space above footer if you add one */
-}
-
-/* Optional Footer Styles */
-/* .app-footer {
-  background: #333;
-  color: #ccc;
-  text-align: center;
-  padding: 1rem 0;
-  margin-top: 2rem;
-} */

@@ -2,11 +2,9 @@ import React, { useState, useEffect } from 'react';
 import MovieList from '../components/MovieList';
 import Loading from '../components/Loading';
 
-const API_KEY = 'da76538c'; // Your OMDb API Key
+const API_KEY = 'da76538c';
 const API_URL_BASE = `https://www.omdbapi.com/?apikey=${API_KEY}`;
 
-// --- Predefined list of popular movie IMDb IDs ---
-// (Pick a few well-known movies)
 const popularMovieIds = [
   'tt0133093', // The Matrix
   'tt1375666', // Inception
@@ -19,29 +17,24 @@ const popularMovieIds = [
 ];
 
 function Home() {
-  // State for the predefined popular movies
+
   const [popularMovies, setPopularMovies] = useState([]);
   const [loadingPopular, setLoadingPopular] = useState(true);
   const [errorPopular, setErrorPopular] = useState(null);
 
-  // State for search results
   const [searchResults, setSearchResults] = useState([]);
-  const [loadingSearch, setLoadingSearch] = useState(false); // Initially false
+  const [loadingSearch, setLoadingSearch] = useState(false);
   const [errorSearch, setErrorSearch] = useState(null);
 
-  // State for the search input field
-  const [inputValue, setInputValue] = useState(''); // Start empty
+  const [inputValue, setInputValue] = useState('');
 
-  // State to track if a search has been performed
   const [hasSearched, setHasSearched] = useState(false);
 
-  // --- Effect to fetch predefined popular movies ON MOUNT ONLY ---
   useEffect(() => {
     const fetchPopularMovies = async () => {
       setLoadingPopular(true);
       setErrorPopular(null);
       try {
-        // Create an array of fetch promises for each ID
         const promises = popularMovieIds.map(id =>
           fetch(`${API_URL_BASE}&i=${id}`).then(res => {
             if (!res.ok) {
@@ -51,10 +44,8 @@ function Home() {
           })
         );
 
-        // Wait for all promises to resolve
         const moviesData = await Promise.all(promises);
 
-        // Filter out any potential errors from individual fetches if OMDb returns Response=False
         const successfulMovies = moviesData.filter(movie => movie.Response === 'True');
 
         if (successfulMovies.length === 0 && moviesData.length > 0) {
@@ -74,20 +65,19 @@ function Home() {
     };
 
     fetchPopularMovies();
-  }, []); // Empty dependency array ensures this runs only once on mount
+  }, []);
 
-  // --- Function to perform search ---
   const performSearch = async (searchTerm) => {
     if (!searchTerm) {
       setErrorSearch("Por favor, digite um termo para buscar.");
       setSearchResults([]);
       setLoadingSearch(false);
-      return; // Exit if search term is empty
+      return;
     }
 
     setLoadingSearch(true);
     setErrorSearch(null);
-    setSearchResults([]); // Clear previous results
+    setSearchResults([]);
 
     try {
       const response = await fetch(`${API_URL_BASE}&s=${encodeURIComponent(searchTerm)}`);
@@ -111,24 +101,20 @@ function Home() {
     }
   };
 
-  // --- Handlers for the search form ---
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
-    // Optionally clear search error message while typing
     if (errorSearch) setErrorSearch(null);
   };
 
   const handleSearchSubmit = (event) => {
     event.preventDefault();
     const searchTerm = inputValue.trim();
-    setHasSearched(true); // Mark that a search has been attempted/performed
+    setHasSearched(true);
     performSearch(searchTerm);
   };
 
-  // --- Render Logic ---
   return (
     <div className="container">
-      {/* Search Form - Always visible */}
       <form onSubmit={handleSearchSubmit} style={{ marginBottom: '2rem', textAlign: 'center' }}>
         <input
           type="text"
@@ -141,10 +127,8 @@ function Home() {
         <button type="submit" style={{ padding: '0.5rem 1rem' }}>Buscar</button>
       </form>
 
-      {/* --- Conditional Content Area --- */}
       <div>
         {!hasSearched ? (
-          // --- Display Popular Movies (Before Search) ---
           <>
             <h2 style={{ textAlign: 'center', marginBottom: '1rem' }}>Filmes Populares</h2>
             {loadingPopular && <Loading />}
@@ -156,16 +140,14 @@ function Home() {
             )}
           </>
         ) : (
-          // --- Display Search Results (After Search) ---
           <>
-            {/* Optional: Add a heading for search results */}
             <h2 style={{ textAlign: 'center', marginBottom: '1rem' }}>Resultados da Busca</h2>
             {loadingSearch && <Loading />}
             {errorSearch && <p className="error">{errorSearch}</p>}
             {!loadingSearch && !errorSearch && (
               searchResults.length > 0
                 ? <MovieList movies={searchResults} />
-                : <p className="info">Nenhum resultado encontrado para "{inputValue.trim() || 'sua busca'}".</p> // Show message even if list is empty
+                : <p className="info">Nenhum resultado encontrado para "{inputValue.trim() || 'sua busca'}".</p>
             )}
           </>
         )}
