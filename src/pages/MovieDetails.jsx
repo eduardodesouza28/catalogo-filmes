@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import Loading from '../components/Loading';
+import '../style.css';
+
 
 const API_KEY = 'da76538c';
 const API_URL = `https://www.omdbapi.com/?apikey=${API_KEY}`;
@@ -58,10 +60,8 @@ function MovieDetails() {
     let updatedFavorites;
 
     if (isFavorite) {
-      // Remove from favorites
       updatedFavorites = currentFavorites.filter(favMovie => favMovie.imdbID !== movieDetails.imdbID);
     } else {
-      // Add to favorites (store essential info)
       const favoriteData = {
         imdbID: movieDetails.imdbID,
         Title: movieDetails.Title,
@@ -85,7 +85,7 @@ function MovieDetails() {
 
   return (
     <div className="container">
-      <Link to="/" className="back-link"> Voltar para a Lista</Link>
+      <a href="/" className="back-link"> ←-</a>
       <div className="movie-details">
         <img src={posterUrl} alt={`${movieDetails.Title} Poster`} />
         <div className="details-content">
