@@ -14,6 +14,8 @@ const popularMovieIds = [
   'tt0110912', // Pulp Fiction
   'tt0068646', // The Godfather
   'tt0816692', // Interstellar
+  'tt0120737', // The Lord of the Rings: The Fellowship of the Ring
+  'tt0167260'  // The Lord of the Rings: The Return of the King
 ];
 
 function Home() {
