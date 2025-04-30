@@ -85,7 +85,7 @@ function MovieDetails() {
 
   return (
     <div className="container">
-      <a href="/" className="back-link"> ←-</a>
+      <a href="/catalogo-filmes" className="back-link"> ←-</a>
       <div className="movie-details">
         <img src={posterUrl} alt={`${movieDetails.Title} Poster`} />
         <div className="details-content">
